@@ -105,13 +105,13 @@
 				create_first_segment,
 				get_new_segment,
 				locate_segment):
-	  note that as CBL_GC extension we also support a 64 bit 
-	  version which allows for a VFILE to exceed the 4GB 
+	  note that as CBL_GC extension we also support a 64 bit
+	  version which allows for a VFILE to exceed the 4GB
 	  limitation if memory is available
 	* coblocal.h: added new variables to support runtime additions
 	  of heap memory for use with VFILES
 	* common.h, system.def: added new definitions for VFILES support
-	* common.c: (config_tbl gc_conf) added new entries for 
+	* common.c: (config_tbl gc_conf) added new entries for
 	  VFILE default memory allocation size
 
 2025-03-28  Simon Sobisch <simonsobisch@gnu.org>
@@ -129,6 +129,12 @@
 
 	* common.h, common.c: handle [__xlc__] identical to [__IBMC__]
 	* common.c [!SIGPIPE]: fix warning about unused jump
+
+2025-01-08  Florian Schmidt <florian.schmidt.1994@icloud.com>
+
+	* libcob/call.c, libcob/coblocal.h, libcob/common.c: Introduce a flag
+	  COB_LOAD_GLOBAL (load_global) to toggle if the symbols of CALLed
+	  programs should be made available in the global namespace
 
 2024-12-31  Simon Sobisch <simonsobisch@gnu.org>
 
