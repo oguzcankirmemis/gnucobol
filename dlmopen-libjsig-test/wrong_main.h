@@ -1,0 +1,1 @@
+int run_cobol_threads_default();

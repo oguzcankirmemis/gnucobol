@@ -1152,7 +1152,6 @@ create_dumpfile (void)
 	return ret;
 }
 
-
 #ifdef	HAVE_SIGNAL_H
 static void
 cob_sig_handler (int sig)
@@ -1371,6 +1370,12 @@ cob_raise (int sig)
 		cob_ext_sighdl = NULL;
 	}
 #endif
+}
+
+void
+(*cob_get_sig_handler (void)) (int)
+{
+	return cob_sig_handler;
 }
 
 static COB_INLINE struct signal_table
@@ -10340,37 +10345,29 @@ void cob_set_main_argv0 (const int argc, char **argv)
 	/* from certain ifdef's */
 }
 
-void
-cob_init (const int argc, char **argv)
+static void
+configure_glibc_fatal_stderr()
 {
-	char		*s;
-	int		i;
-
-	/* Ensure initialization is only done once. Within generated modules and
-	   libcob this is already ensured, but an external caller may call this
-	   function again */
-	if (cob_initialized) {
-#if 0	/* Simon: We may raise a runtime warning/error in the future here */
-		cob_runtime_warning ("%s called more than once", "cob_init");
-#endif
-		return;
-	}
-
 #ifdef __GLIBC__
 	{
 		/* 
-		 * GNU libc may write a stack trace to /dev/tty when malloc
-		 * detects corruption.  If LIBC_FATAL_STDERR_ is set to any
-		 * nonempty string, it writes to stderr instead. See:
-		 *https://code.woboq.org/userspace/glibc/sysdeps/posix/libc_fatal.c.html
-		 */
+			* GNU libc may write a stack trace to /dev/tty when malloc
+			* detects corruption.  If LIBC_FATAL_STDERR_ is set to any
+			* nonempty string, it writes to stderr instead. See:
+			*https://code.woboq.org/userspace/glibc/sysdeps/posix/libc_fatal.c.html
+			*/
 		if (getenv ((const char*)"LIBC_FATAL_STDERR_") == NULL ) {
 			(void)putenv ((char*)"LIBC_FATAL_STDERR_=keep_off_the_grass");
 		}
 	}
 #endif
+}
 
-	cob_set_signal ();
+static void
+cob_init_internal (const int argc, char **argv)
+{
+	char		*s;
+	int		i;
 
 	cob_alloc_base = NULL;
 	cob_local_env = NULL;
@@ -10524,6 +10521,27 @@ cob_init (const int argc, char **argv)
 		}
 #endif
 	}
+}
+
+void
+cob_init_without_sig_handler (const int argc, char **argv)
+{
+	if (cob_initialized) {
+		return 0;
+	}
+	configure_glibc_fatal_stderr ();
+	cob_init_internal (argc, argv);
+}
+
+void
+cob_init (const int argc, char **argv)
+{
+	if (cob_initialized) {
+		return 0;
+	}
+	configure_glibc_fatal_stderr ();
+	cob_set_signal ();
+	cob_init_internal (argc, argv);
 }
 
 /*
