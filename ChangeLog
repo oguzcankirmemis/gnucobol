@@ -1,4 +1,15 @@
 
+2025-09-26	Oğuzcan Kırmemiş <oguzcan.kirmemis@gmail.com>
+
+	* common.c (cob_set_signal): add the enum COB_SIGNAL_REGIME to toggle
+	  whether signal handler registration should be skipped or only registered
+	  when there is no other external handler registered for the signal
+	* common.h: export cob_sig_handler for use by external signal handlers
+	* coblocal.h (cob_settings): add COB_SIGNAL_REGIME so that it can be
+	  displayed under cobcrun --runtime
+	* configure.ac, atlocal.in, atlocal_win: pass HAVE_SIGNAL_H to the tests to
+	  indicate whether signal.h exists
+
 2025-05-13  David Declerck <david.declerck@ocamlpro.com>
 
 	* configure.ac: testing working diff with the option to override by DIFF
