@@ -10416,6 +10416,8 @@ cob_init (const int argc, char **argv)
 
 	cob_set_signal ();
 
+	strbuff = NULL;
+
 	cob_alloc_base = NULL;
 	cob_local_env = NULL;
 	cob_last_sfile = NULL;
