@@ -10319,6 +10319,8 @@ cob_call_with_exception_check (const char *name, const int argc, void **argv)
 	int ret;
 	printf("cob_signal_handler: %p\n", cob_sig_handler);
 	printf("signal registration: %p\n", signal(SIGSEGV, cob_sig_handler));
+	fflush(stdout);
+	raise(SIGSEGV);
 	return_jmp_buffer_set = 1;
 	ret = setjmp (return_jmp_buf);
 	if (ret) {
