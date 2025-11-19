@@ -15751,7 +15751,9 @@ AT_DATA([callee.cob], [
        LINKAGE SECTION.
        01 VAR1 PIC X(4) VALUE "TEST".
        PROCEDURE DIVISION USING VAR1.
+           DISPLAY "TEST_LOG1".
            DISPLAY VAR1.
+           DISPLAY "TEST_LOG2".
            STOP RUN RETURNING 0.
 ])
 
