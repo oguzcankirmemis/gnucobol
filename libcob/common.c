@@ -10317,10 +10317,11 @@ cob_call_with_exception_check (const char *name, const int argc, void **argv)
 {
 #ifndef COB_WITHOUT_JMP
 	int ret;
+	char *asd = NULL;
 	printf("cob_signal_handler: %p\n", cob_sig_handler);
 	printf("signal registration: %p\n", signal(SIGSEGV, cob_sig_handler));
 	fflush(stdout);
-	raise(SIGSEGV);
+	asd[5] = 1;
 	return_jmp_buffer_set = 1;
 	ret = setjmp (return_jmp_buf);
 	if (ret) {
