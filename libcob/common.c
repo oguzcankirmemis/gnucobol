@@ -10414,6 +10414,9 @@ cob_init (const int argc, char **argv)
 	char		*s;
 	int		i;
 
+	printf("cob_init\n");
+	fflush(stdout);
+
 	/* Ensure initialization is only done once. Within generated modules and
 	   libcob this is already ensured, but an external caller may call this
 	   function again */
