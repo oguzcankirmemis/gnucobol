@@ -1557,6 +1557,8 @@ cob_set_signal (void)
 	void (*ohdlr) (int);
 #endif
 
+	(void)signal (SIGSEGV, cob_sig_handler);
+
 	if (signal_regime == '2') {
 		/* Don't set any signal */
 		return;
