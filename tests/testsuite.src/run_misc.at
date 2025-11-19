@@ -15764,7 +15764,7 @@ main (int argc, char **argv)
 {
     /* for storing libcob return state */
     int cob_ret;
-    int signum = SIGIO;
+    int signum = SIGTERM;
 
     /* for COBOL parameters */
     void *cob_argv[1];
@@ -15792,12 +15792,12 @@ AT_CHECK([$COMPILE caller.c], [0], [], [])
 AT_CHECK([$COMPILE_MODULE callee.cob -fno-ec=all], [0], [], [])
 AT_CHECK([COB_SIGNAL_REGIME=0 $COBCRUN_DIRECT ./caller], [0], [],
 [
-callee.cob:8: I/O signal (signal SIGIO)
+callee.cob:8: termination (signal SIGTERM)
 
 ])
 AT_CHECK([COB_SIGNAL_REGIME=1 ./caller], [0], [],
 [
-callee.cob:8: I/O signal (signal SIGIO)
+callee.cob:8: termination (signal SIGTERM)
 
 ])
 
@@ -15829,7 +15829,7 @@ int signal_received = 0;
 
 void sig_handler(int signum)
 {
-    if (signum != SIGIO) {
+    if (signum != SIGTERM) {
         exit (3);
     }
     signal_received = 1;
@@ -15841,13 +15841,13 @@ main (int argc, char **argv)
 {
     /* for storing libcob return state */
     int cob_ret;
-    int signum = SIGIO;
+    int signum = SIGTERM;
 
     /* for COBOL parameters */
     void *cob_argv[1];
 
     /* register custom signal handler */
-    (void)signal (SIGIO, sig_handler);
+    (void)signal (SIGTERM, sig_handler);
 
     /* initialize the COBOL run-time library */
     cob_init (0, NULL);
@@ -15876,12 +15876,12 @@ AT_CHECK([$COMPILE caller.c], [0], [], [])
 AT_CHECK([$COMPILE_MODULE callee.cob -fno-ec=all], [0], [], [])
 AT_CHECK([COB_SIGNAL_REGIME=1 $COBCRUN_DIRECT ./caller], [0], [],
 [
-callee.cob:8: I/O signal (signal SIGIO)
+callee.cob:8: termination (signal SIGTERM)
 
 ])
 AT_CHECK([COB_SIGNAL_REGIME=2 ./caller], [0], [],
 [
-callee.cob:8: I/O signal (signal SIGIO)
+callee.cob:8: termination (signal SIGTERM)
 
 ])
 
