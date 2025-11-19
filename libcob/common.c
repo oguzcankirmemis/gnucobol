@@ -1205,6 +1205,8 @@ cob_sig_handler (int sig)
 	struct sigaction	sa;
 #endif
 
+	printf("hello from signal handler 1\n");
+	fflush(stdout);
 #ifdef	HAVE_SIG_ATOMIC_T
 	 if (sig_is_handled) {
 #ifdef	HAVE_RAISE
