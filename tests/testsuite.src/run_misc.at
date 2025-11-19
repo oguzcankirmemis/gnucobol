@@ -15749,45 +15749,36 @@ AT_DATA([callee.cob], [
        PROGRAM-ID. callee.
        DATA DIVISION.
        LINKAGE SECTION.
-       01 VAR1 PIC X(4) VALUE "TEST".
+       01 VAR1 USAGE BINARY-SHORT.
        PROCEDURE DIVISION USING VAR1.
-           DISPLAY "TEST_LOG1".
-           DISPLAY VAR1.
-           DISPLAY "TEST_LOG2".
+           CALL "raise" USING BY VALUE VAR1.
            STOP RUN RETURNING 0.
 ])
 
 AT_DATA([caller.c], [[
-#include <stdio.h>
 #include <libcob.h>
+#include <signal.h>
 
 int
 main (int argc, char **argv)
 {
     /* for storing libcob return state */
     int cob_ret;
+    int signum = SIGIO;
 
     /* for COBOL parameters */
     void *cob_argv[1];
-    cob_argv[0] = NULL;
+    cob_argv[0] = (void *) &signum;
 
     /* initialize the COBOL run-time library */
-    printf ("log0\n");
-    fflush(stdout);
     cob_init (0, NULL);
 
     /* call COBOL program */
-    printf ("log1\n");
-    fflush(stdout);
     cob_ret = cob_call_with_exception_check ("callee", 1, cob_argv);
 
     /* Clean up and terminate runtime */
-    printf ("log2\n");
-    fflush(stdout);
     cob_tidy ();
 
-    printf ("log3\n");
-    fflush(stdout);
     /* Check exit by signal handler */
     if (cob_ret != -3) {
         return 1;
@@ -15801,12 +15792,12 @@ AT_CHECK([$COMPILE caller.c], [0], [], [])
 AT_CHECK([$COMPILE_MODULE callee.cob -fno-ec=all], [0], [], [])
 AT_CHECK([COB_SIGNAL_REGIME=0 $COBCRUN_DIRECT ./caller], [0], [],
 [
-callee.cob:8: attempt to reference invalid memory address (signal SIGSEGV)
+callee.cob:8: I/O signal (signal SIGIO)
 
 ])
 AT_CHECK([COB_SIGNAL_REGIME=1 ./caller], [0], [],
 [
-callee.cob:8: attempt to reference invalid memory address (signal SIGSEGV)
+callee.cob:8: I/O signal (signal SIGIO)
 
 ])
 
@@ -15823,22 +15814,22 @@ AT_DATA([callee.cob], [
        PROGRAM-ID. callee.
        DATA DIVISION.
        LINKAGE SECTION.
-       01 VAR1 PIC X(4) VALUE "TEST".
+       01 VAR1 USAGE BINARY-SHORT.
        PROCEDURE DIVISION USING VAR1.
-           DISPLAY VAR1.
+           CALL "raise" USING BY VALUE VAR1.
            STOP RUN RETURNING 0.
 ])
 
 AT_DATA([caller.c], [[
+#include <libcob.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <libcob.h>
 
 int signal_received = 0;
 
 void sig_handler(int signum)
 {
-    if (signum != SIGSEGV) {
+    if (signum != SIGIO) {
         exit (3);
     }
     signal_received = 1;
@@ -15850,18 +15841,19 @@ main (int argc, char **argv)
 {
     /* for storing libcob return state */
     int cob_ret;
+    int signum = SIGIO;
 
     /* for COBOL parameters */
     void *cob_argv[1];
 
     /* register custom signal handler */
-    (void)signal (SIGSEGV, sig_handler);
+    (void)signal (SIGIO, sig_handler);
 
     /* initialize the COBOL run-time library */
     cob_init (0, NULL);
 
     /* call COBOL program */
-    cob_argv[0] = NULL;
+    cob_argv[0] = (void *) &signum;
     cob_ret = cob_call_with_exception_check ("callee", 1, cob_argv);
 
     /* Clean up and terminate runtime */
@@ -15884,12 +15876,12 @@ AT_CHECK([$COMPILE caller.c], [0], [], [])
 AT_CHECK([$COMPILE_MODULE callee.cob -fno-ec=all], [0], [], [])
 AT_CHECK([COB_SIGNAL_REGIME=1 $COBCRUN_DIRECT ./caller], [0], [],
 [
-callee.cob:8: attempt to reference invalid memory address (signal SIGSEGV)
+callee.cob:8: I/O signal (signal SIGIO)
 
 ])
 AT_CHECK([COB_SIGNAL_REGIME=2 ./caller], [0], [],
 [
-callee.cob:8: attempt to reference invalid memory address (signal SIGSEGV)
+callee.cob:8: I/O signal (signal SIGIO)
 
 ])
 

@@ -1205,9 +1205,6 @@ cob_sig_handler (int sig)
 	struct sigaction	sa;
 #endif
 
-	exit(3);
-	printf("hello from signal handler 1\n");
-	fflush(stdout);
 #ifdef	HAVE_SIG_ATOMIC_T
 	 if (sig_is_handled) {
 #ifdef	HAVE_RAISE
@@ -1557,8 +1554,6 @@ cob_set_signal (void)
 #else
 	void (*ohdlr) (int);
 #endif
-
-	(void)signal (SIGSEGV, cob_sig_handler);
 
 	if (signal_regime == '2') {
 		/* Don't set any signal */
@@ -10317,11 +10312,6 @@ cob_call_with_exception_check (const char *name, const int argc, void **argv)
 {
 #ifndef COB_WITHOUT_JMP
 	int ret;
-	char *asd = NULL;
-	printf("cob_signal_handler: %p\n", cob_sig_handler);
-	printf("signal registration: %p\n", signal(SIGSEGV, cob_sig_handler));
-	fflush(stdout);
-	asd[5] = 1;
 	return_jmp_buffer_set = 1;
 	ret = setjmp (return_jmp_buf);
 	if (ret) {
@@ -10420,8 +10410,6 @@ cob_init (const int argc, char **argv)
 	char		*s;
 	int		i;
 
-	printf("cob_init\n");
-	fflush(stdout);
 
 	/* Ensure initialization is only done once. Within generated modules and
 	   libcob this is already ensured, but an external caller may call this
