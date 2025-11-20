@@ -15743,6 +15743,7 @@ AT_SETUP([COB_SIGNAL_REGIME={0,1} registers runtime signal handler])
 AT_KEYWORDS([runmisc cob_call_with_exception_check COB_SIGNAL_REGIME])
 
 AT_SKIP_IF([test "$HAVE_SIGNAL_H" != "yes"])
+AT_SKIP_IF([test "$WINDOWS_COMPILATION_TARGET" == "yes"])
 
 AT_DATA([callee.cob], [
        IDENTIFICATION DIVISION.
@@ -15808,6 +15809,7 @@ AT_SETUP([COB_SIGNAL_REGIME={1,2} does not register runtime signal handler])
 AT_KEYWORDS([runmisc cob_call_with_exception_check COB_SIGNAL_REGIME])
 
 AT_SKIP_IF([test "$HAVE_SIGNAL_H" != "yes"])
+AT_SKIP_IF([test "$WINDOWS_COMPILATION_TARGET" == "yes"])
 
 AT_DATA([callee.cob], [
        IDENTIFICATION DIVISION.
